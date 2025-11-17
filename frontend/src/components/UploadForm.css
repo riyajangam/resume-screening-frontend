@@ -1,0 +1,61 @@
+.upload-form {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.upload-area {
+  border: 2px dashed #bdc3c7;
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  background-color: #f8f9fa;
+}
+
+.upload-area.drag-active {
+  border-color: #3498db;
+  background-color: #ebf5fb;
+}
+
+.file-input {
+  display: none;
+}
+
+.upload-label {
+  cursor: pointer;
+  display: block;
+}
+
+.upload-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.upload-hint {
+  color: #7f8c8d;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.selected-file {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #d5edda;
+  border-radius: 4px;
+}
+
+.upload-button {
+  background-color: #27ae60;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  font-size: 1rem;
+}
+
+.upload-button:hover {
+  background-color: #219a52;
+}

@@ -1,0 +1,79 @@
+.resume-editor {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.editor-section {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  border: 1px solid #e1e8ed;
+  border-radius: 8px;
+  background-color: white;
+}
+
+.editor-section h3 {
+  margin-top: 0;
+  color: #2c3e50;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 0.5rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #34495e;
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 0.75rem;
+  border: 1px solid #bdc3c7;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.add-button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.add-button:hover {
+  background-color: #2980b9;
+}
+
+.education-item {
+  padding: 1rem;
+  border: 1px solid #ecf0f1;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  background-color: #f8f9fa;
+}

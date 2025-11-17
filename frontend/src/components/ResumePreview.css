@@ -1,0 +1,98 @@
+.resume-preview {
+  border: 1px solid #e1e8ed;
+  border-radius: 8px;
+  background-color: white;
+}
+
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #e1e8ed;
+  background-color: #f8f9fa;
+}
+
+.preview-placeholder {
+  padding: 3rem;
+  text-align: center;
+  color: #7f8c8d;
+}
+
+.download-button {
+  background-color: #27ae60;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.download-button:hover {
+  background-color: #219a52;
+}
+
+.resume-template {
+  padding: 2rem;
+  min-height: 400px;
+}
+
+.resume-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 1rem;
+}
+
+.resume-header h1 {
+  margin: 0 0 1rem 0;
+  color: #2c3e50;
+}
+
+.contact-info {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.contact-info span {
+  color: #7f8c8d;
+}
+
+.resume-section {
+  margin-bottom: 1.5rem;
+}
+
+.resume-section h2 {
+  color: #2c3e50;
+  border-bottom: 1px solid #bdc3c7;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.education-item,
+.experience-item {
+  margin-bottom: 1rem;
+}
+
+.education-item h3,
+.experience-item h3 {
+  margin: 0;
+  color: #34495e;
+}
+
+.skills-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.skill-tag {
+  background-color: #3498db;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+}

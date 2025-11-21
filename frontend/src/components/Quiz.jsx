@@ -1166,18 +1166,31 @@ const Quiz = ({ quizInfo, onComplete }) => {
     setLoading(false);
   }, [quizInfo, getQuestionsByCategory]);
 
-  const calculateScore = useCallback(() => {
-    let correct = 0;
-    questions.forEach(question => {
-      if (answers[question.id] === question.correct) {
-        correct++;
-      }
+  // Debug useEffect to track state changes
+  useEffect(() => {
+    console.log('Quiz State:', {
+      quizCompleted,
+      score,
+      currentQuestion,
+      answersCount: Object.keys(answers).length,
+      questionsCount: questions.length
     });
-    return Math.round((correct / questions.length) * 100);
-  }, [questions, answers]);
+  }, [quizCompleted, score, currentQuestion, answers, questions]);
 
   const handleQuizComplete = useCallback(() => {
-    const finalScore = calculateScore();
+    // Calculate score directly to ensure accuracy
+    const correctAnswers = questions.filter(q => answers[q.id] === q.correct).length;
+    const totalQuestions = questions.length;
+    const finalScore = Math.round((correctAnswers / totalQuestions) * 100);
+    
+    console.log('Quiz completed!', {
+      score: finalScore,
+      correctAnswers,
+      totalQuestions,
+      answers: answers
+    });
+
+    // Set the score and mark as completed
     setScore(finalScore);
     setQuizCompleted(true);
     
@@ -1186,23 +1199,36 @@ const Quiz = ({ quizInfo, onComplete }) => {
     const quizResults = userData.quizResults || [];
     
     const newResult = {
+      id: Date.now(), // Unique ID for this attempt
       type: quizInfo.type,
       skill: quizInfo.skill || quizInfo.role,
       company: quizInfo.company || 'Skill Assessment',
-      level: quizInfo.level || 'Not specified',
+      level: quizInfo.level || 'beginner',
+      category: quizInfo.category || 'Programming',
       score: finalScore,
+      correctAnswers: correctAnswers,
+      totalQuestions: totalQuestions,
+      timeTaken: 900 - timeRemaining,
       date: new Date().toISOString(),
-      totalQuestions: questions.length,
-      correctAnswers: questions.filter(q => answers[q.id] === q.correct).length
+      answers: questions.map(question => ({
+        questionId: question.id,
+        question: question.question,
+        userAnswer: answers[question.id],
+        correctAnswer: question.correct,
+        isCorrect: answers[question.id] === question.correct,
+        explanation: question.explanation
+      }))
     };
     
-    userData.quizResults = [...quizResults, newResult];
+    console.log('Saving quiz result:', newResult);
+    
+    userData.quizResults = [newResult, ...quizResults]; // Add to beginning of array
     localStorage.setItem('user', JSON.stringify(userData));
     
     if (onComplete) {
       onComplete(finalScore);
     }
-  }, [calculateScore, quizInfo, questions, answers, onComplete]);
+  }, [questions, answers, quizInfo, timeRemaining, onComplete]);
 
   // Timer effect
   useEffect(() => {
@@ -1227,7 +1253,10 @@ const Quiz = ({ quizInfo, onComplete }) => {
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(prev => prev + 1);
     } else {
-      handleQuizComplete();
+      // Use setTimeout to ensure all state updates are processed
+      setTimeout(() => {
+        handleQuizComplete();
+      }, 100);
     }
   };
 
@@ -1260,13 +1289,16 @@ const Quiz = ({ quizInfo, onComplete }) => {
   }
 
   if (quizCompleted) {
+    // Calculate score directly here to ensure it's always accurate
     const correctAnswers = questions.filter(q => answers[q.id] === q.correct).length;
+    const totalQuestions = questions.length;
+    const finalScore = Math.round((correctAnswers / totalQuestions) * 100);
     
     return (
       <div className="quiz-results">
         <div className="results-header">
-          <div className={`results-icon ${score >= 70 ? 'excellent' : score >= 50 ? 'good' : 'poor'}`}>
-            {score >= 70 ? '🏆' : score >= 50 ? '⭐' : '📚'}
+          <div className={`results-icon ${finalScore >= 70 ? 'excellent' : finalScore >= 50 ? 'good' : 'poor'}`}>
+            {finalScore >= 70 ? '🏆' : finalScore >= 50 ? '⭐' : '📚'}
           </div>
           <h3>Assessment Complete!</h3>
           <p>
@@ -1278,14 +1310,14 @@ const Quiz = ({ quizInfo, onComplete }) => {
         </div>
 
         <div className="score-display">
-          <div className="score-circle" style={{'--score-percent': `${score}%`}}>
-            <span className="score-percent">{score}%</span>
+          <div className="score-circle" style={{'--score-percent': `${finalScore}%`}}>
+            <span className="score-percent">{finalScore}%</span>
             <div className="score-text">Score</div>
           </div>
           <div className="score-details">
             <div className="detail-item">
               <span className="detail-label">Correct Answers:</span>
-              <span className="detail-value">{correctAnswers}/{questions.length}</span>
+              <span className="detail-value">{correctAnswers}/{totalQuestions}</span>
             </div>
             <div className="detail-item">
               <span className="detail-label">Time Taken:</span>
@@ -1295,31 +1327,103 @@ const Quiz = ({ quizInfo, onComplete }) => {
               <span className="detail-label">Difficulty:</span>
               <span className="detail-value">{quizInfo.level || 'Mixed'}</span>
             </div>
+            <div className="detail-item">
+              <span className="detail-label">Assessment Type:</span>
+              <span className="detail-value">
+                {quizInfo.type === 'job' ? 'Company Assessment' : 'Skill Assessment'}
+              </span>
+            </div>
           </div>
         </div>
 
         <div className="performance-feedback">
           <h4>
-            {score >= 80 ? 'Excellent Work! 🎉' : 
-             score >= 60 ? 'Good Job! 👍' : 
+            {finalScore >= 80 ? 'Excellent Work! 🎉' : 
+             finalScore >= 60 ? 'Good Job! 👍' : 
              'Keep Practicing! 💪'}
           </h4>
           <p>
-            {score >= 80 ? 'You have demonstrated strong knowledge in this area.' :
-             score >= 60 ? 'You have a good understanding of the fundamentals.' :
+            {finalScore >= 80 ? 'You have demonstrated strong knowledge in this area.' :
+             finalScore >= 60 ? 'You have a good understanding of the fundamentals.' :
              'Review the concepts and try again to improve your understanding.'}
           </p>
+          
+          {finalScore < 70 && (
+            <div className="improvement-tips">
+              <h5>Tips for Improvement:</h5>
+              <ul>
+                <li>Review the questions you answered incorrectly</li>
+                <li>Practice more with similar difficulty level</li>
+                <li>Focus on the key concepts of {quizInfo.category}</li>
+                <li>Take the assessment again to track your progress</li>
+              </ul>
+            </div>
+          )}
         </div>
 
         <div className="results-actions">
-          <button className="btn-retry" onClick={() => window.location.reload()}>
+          <button 
+            className="btn-retry" 
+            onClick={() => {
+              // Reset the quiz completely
+              setCurrentQuestion(0);
+              setAnswers({});
+              setQuizCompleted(false);
+              setScore(0);
+              setTimeRemaining(900);
+            }}
+          >
             <i className="fas fa-redo"></i>
             Retry Assessment
           </button>
-          <button className="btn-review" onClick={() => window.location.href = '/profile'}>
+          <button 
+            className="btn-review" 
+            onClick={() => {
+              // Navigate to profile page
+              window.location.href = '/profile';
+            }}
+          >
             <i className="fas fa-chart-bar"></i>
             View Profile
           </button>
+        </div>
+
+        {/* Detailed Results Section */}
+        <div className="detailed-results">
+          <h4>Question Review</h4>
+          <div className="questions-review">
+            {questions.map((question, index) => {
+              const userAnswer = answers[question.id];
+              const isCorrect = userAnswer === question.correct;
+              
+              return (
+                <div key={question.id} className={`question-review ${isCorrect ? 'correct' : 'incorrect'}`}>
+                  <div className="question-header">
+                    <span className="question-number">Question {index + 1}</span>
+                    <span className={`result-status ${isCorrect ? 'correct' : 'incorrect'}`}>
+                      {isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                    </span>
+                  </div>
+                  <p className="review-question">{question.question}</p>
+                  <div className="answer-comparison">
+                    <div className="user-answer">
+                      <strong>Your answer:</strong> {question.options[userAnswer]}
+                    </div>
+                    {!isCorrect && (
+                      <div className="correct-answer">
+                        <strong>Correct answer:</strong> {question.options[question.correct]}
+                      </div>
+                    )}
+                  </div>
+                  {question.explanation && (
+                    <div className="explanation">
+                      <strong>Explanation:</strong> {question.explanation}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     );
@@ -1328,6 +1432,7 @@ const Quiz = ({ quizInfo, onComplete }) => {
   const question = questions[currentQuestion];
   const selectedAnswer = answers[question.id];
   const progress = ((currentQuestion + 1) / questions.length) * 100;
+  const isLastQuestion = currentQuestion === questions.length - 1;
 
   return (
     <div className="quiz">
@@ -1402,9 +1507,9 @@ const Quiz = ({ quizInfo, onComplete }) => {
           <button
             onClick={nextQuestion}
             disabled={selectedAnswer === undefined}
-            className="nav-button next"
+            className={`nav-button next ${isLastQuestion ? 'finish-btn' : ''}`}
           >
-            {currentQuestion === questions.length - 1 ? 'Finish Assessment' : 'Next Question'}
+            {isLastQuestion ? 'Finish Assessment' : 'Next Question'}
             <i className="fas fa-arrow-right"></i>
           </button>
         </div>

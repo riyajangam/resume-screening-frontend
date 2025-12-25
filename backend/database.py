@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 from pymongo import MongoClient
 
+
 load_dotenv()
 
 # ------------------------------------------------
@@ -21,5 +22,9 @@ if not MONGO_URI:
 client = MongoClient(MONGO_URI)
 
 db = client[DATABASE_NAME]
+# ✅ MongoDB Collections
+resumes_collection = db["resumes"]
+users_collection = db["users"]
+jobs_collection = db["jobs"]
 
 print("✅ Connected to MongoDB Atlas:", DATABASE_NAME)

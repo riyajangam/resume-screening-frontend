@@ -1,99 +1,43 @@
-# routes/resume_routes.py
-
 from flask import Blueprint, request, jsonify
-from werkzeug.utils import secure_filename
-from bson import ObjectId
-import os
-from datetime import datetime
+from utils.resume_parser import parse_resume_text
 
-from database import db
-from models import ResumeModel, UserModel, AnalysisSessionModel
-from utils.resume_parser import extract_text_from_file, SimpleSkillExtractor, SimpleResumeParser
+resume_bp = Blueprint("resume", __name__)
 
-resume_bp = Blueprint("resume_routes", __name__)
-
-skill_extractor = SimpleSkillExtractor()
-resume_parser = SimpleResumeParser()
-
-# Allowed extensions
-ALLOWED_EXTENSIONS = {'pdf', 'docx', 'doc'}
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
-# ----------------------------------------------------------
-# UPLOAD RESUME + ANALYZE + SAVE IN DB
-# ----------------------------------------------------------
 @resume_bp.route("/upload", methods=["POST"])
 def upload_resume():
-    try:
-        if 'resume' not in request.files:
-            return jsonify({"success": False, "error": "No resume file provided"}), 400
+    file = request.files.get("resume")
 
-        resume_file = request.files['resume']
+    if not file:
+        return jsonify({"valid": False, "message": "No file uploaded"})
 
-        if resume_file.filename == "":
-            return jsonify({"success": False, "error": "No file selected"}), 400
+    text = file.read().decode(errors="ignore")
+    parsed = parse_resume_text(text)
 
-        if not allowed_file(resume_file.filename):
-            return jsonify({"success": False, "error": "Invalid file type"}), 400
-
-        filename = secure_filename(resume_file.filename)
-        unique_name = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_{filename}"
-
-        upload_folder = os.path.join(os.getcwd(), "uploads", "resumes")
-        os.makedirs(upload_folder, exist_ok=True)
-
-        file_path = os.path.join(upload_folder, unique_name)
-        resume_file.save(file_path)
-
-        # Extract text
-        with open(file_path, "rb") as fh:
-            text = extract_text_from_file(fh)
-
-        if not text.strip():
-            return jsonify({"success": False, "error": "Unable to read resume"}), 400
-
-        # Analyze resume
-        skills = skill_extractor.extract_skills(text)
-        parsed = resume_parser.parse_resume(text)
-
-        # Save to DB
-        resume_data = {
-            "file_name": unique_name,
-            "file_path": file_path,
-            "skills": skills,
-            "parsed": parsed,
-            "created_at": datetime.utcnow().isoformat()
-        }
-
-        resume_id = ResumeModel.create_resume(resume_data)
-
+    if not parsed["is_valid_resume"]:
         return jsonify({
-            "success": True,
-            "resume_id": resume_id,
-            "skills": skills,
-            "parsed_data": parsed
-        }), 200
+            "valid": False,
+            "message": "Invalid resume format"
+        })
 
-    except Exception as e:
-        return jsonify({"success": False, "error": str(e)}), 500
+    skill_count = len(parsed["skills"])
 
+    # 📊 Accurate scoring logic
+    skill_score = min((skill_count / 6) * 50, 50)
+    education_score = 20 if parsed["education_found"] else 0
+    experience_score = 20 if parsed["experience_found"] else 0
+    structure_score = 10 if skill_count >= 4 else 5
 
-# ----------------------------------------------------------
-# GET A SPECIFIC RESUME BY ID
-# ----------------------------------------------------------
-@resume_bp.route("/<resume_id>", methods=["GET"])
-def get_resume(resume_id):
-    try:
-        resume = ResumeModel.get_resume_by_id(resume_id)
-        if not resume:
-            return jsonify({"success": False, "error": "Resume not found"}), 404
+    final_score = round(
+        skill_score + education_score + experience_score + structure_score
+    )
 
-        resume["_id"] = str(resume["_id"])
-
-        return jsonify({"success": True, "resume": resume}), 200
-
-    except Exception as e:
-        return jsonify({"success": False, "error": str(e)}), 500
+    return jsonify({
+        "valid": True,
+        "skills": parsed["skills"],
+        "scores": {
+            "final": final_score,
+            "skills": round(skill_score),
+            "experience": experience_score,
+            "content": structure_score + education_score
+        }
+    })

@@ -1,4 +1,4 @@
-#!C:\Users\riyaj\OneDrive\Desktop\engineering\Major Project\backend\venv\Scripts\python.exe
+#!C:\Users\Admin\Desktop\resume-screening-frontend\backend\venv\Scripts\python.exe
 """Extract pdf structure in XML format"""
 
 import logging

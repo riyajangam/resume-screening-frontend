@@ -1,0 +1,10 @@
+TANUJA CHAVAN
+Software Developer
+
+SKILLS:
+- Python, JavaScript, React, Node.js
+- HTML, CSS, MongoDB, MySQL
+- Git, Docker, AWS
+
+EXPERIENCE:
+2 years as Full Stack Developer

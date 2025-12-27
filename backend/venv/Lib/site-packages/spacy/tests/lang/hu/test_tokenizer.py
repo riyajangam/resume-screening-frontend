@@ -1,6 +1,5 @@
 import pytest
 
-
 DEFAULT_TESTS = [
     ("N. kormányzósági\nszékhely.", ["N.", "kormányzósági", "székhely", "."]),
     pytest.param(
@@ -305,9 +304,11 @@ TESTS.extend([x for i, x in enumerate(EXTRA_TESTS) if i % 10 == 0])
 SLOW_TESTS = [x for i, x in enumerate(EXTRA_TESTS) if i % 10 != 0]
 TESTS.extend(
     [
-        pytest.param(x[0], x[1], marks=pytest.mark.slow())
-        if not isinstance(x[0], tuple)
-        else x
+        (
+            pytest.param(x[0], x[1], marks=pytest.mark.slow())
+            if not isinstance(x[0], tuple)
+            else x
+        )
         for x in SLOW_TESTS
     ]
 )

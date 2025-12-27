@@ -1,0 +1,3 @@
+﻿John Doe
+Software Developer
+Skills: Python, JavaScript, React

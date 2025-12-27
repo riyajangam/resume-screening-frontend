@@ -1,0 +1,19 @@
+TANUJA CHAVAN
+Software Developer
+Email: tanujachavan878@gmail.com
+
+SKILLS:
+- Programming: Python, JavaScript, Java
+- Web: HTML5, CSS3, React.js, Node.js
+- Database: MySQL, MongoDB
+- Tools: Git, VS Code, Docker
+
+EXPERIENCE:
+Software Developer at ABC Tech (2022-Present)
+- Developed web applications using React and Python
+- Created REST APIs with Flask
+- Worked with MongoDB databases
+
+EDUCATION:
+Bachelor of Engineering in Computer Science
+University of Mumbai, 2018-2022

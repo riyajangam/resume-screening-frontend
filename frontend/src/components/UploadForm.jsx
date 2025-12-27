@@ -49,6 +49,7 @@ const UploadForm = ({ onFileUpload }) => {
       onFileUpload(selectedFile);
     }
   };
+  console.log("handle------------------------->",handleSubmit)
 
   return (
     <div className="upload-form">

@@ -1,0 +1,12 @@
+John Doe
+Software Developer
+
+SKILLS:
+- Python, JavaScript, HTML, CSS
+- React, Node.js, Express
+- MongoDB, MySQL
+- Git, Docker, AWS
+- Agile, Scrum
+
+EXPERIENCE:
+2 years web development

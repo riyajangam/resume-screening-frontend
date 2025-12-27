@@ -1,0 +1,33 @@
+﻿{
+    // Use Python from your virtual environment
+    "python.defaultInterpreterPath": "./venv/Scripts/python.exe",
+    
+    // Tell Pylance where to look for your modules
+    "python.analysis.extraPaths": ["."],
+    
+    // Disable strict type checking (reduces false errors)
+    "python.analysis.typeCheckingMode": "off",
+    
+    // Disable linting if it's causing issues
+    "python.linting.enabled": false,
+    
+    // Auto-activate virtual environment in terminal
+    "python.terminal.activateEnvironment": true,
+    
+    // Set Python path for integrated terminal
+    "terminal.integrated.env.windows": {
+        "PYTHONPATH": ""
+    },
+    
+    // Formatting settings
+    "python.formatting.provider": "autopep8",
+    
+    // Auto-complete settings
+    "python.analysis.autoImportCompletions": true,
+    
+    // Don't show all warnings
+    "python.analysis.diagnosticSeverityOverrides": {
+        "reportMissingImports": "warning",
+        "reportUndefinedVariable": "warning"
+    }
+}
